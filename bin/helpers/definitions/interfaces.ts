@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from 'express'
+import { Router, Request, Response, NextFunction, CookieOptions } from 'express'
 
 /**
  *  !-- CONTROLLER ATTRIBUTES (interface)
@@ -8,6 +8,7 @@ import { Router, Request, Response, NextFunction } from 'express'
 interface ControllerIFC {
   path: string
   router: Router
+  ctx: string
 }
 /**
  *  !-- COOKIE ATTRIBUTES (interface)
@@ -19,18 +20,49 @@ interface CookieIFC {
   value: string
 }
 /**
+ *  !-- TOKEN ATTRIBUTES (interface)
+ *
+ * @desc defines all token attributes and their data types.
+ */
+interface TokenIFC {
+  userId: string
+  authType: string
+  iat: number
+  exp: number
+  aud: string
+  iss: string
+  error: { feed: string }
+}
+/**
+ *  !-- JWT ATTRIBUTES (interface)
+ *
+ * @desc defines all jwt attributes and their data types.
+ */
+interface GetKeyIFC {
+  (keyPath: string): string
+}
+interface GenerateTokenIFC {
+  (payload: any, expiresIn?: string): Promise<string>
+}
+interface DecodedTokenIFC {
+  (token: Array<string> | string | any): TokenIFC
+}
+interface VerifyTokenIFC {
+  (request: Request, response: Response, next: NextFunction): void
+}
+/**
  *  !-- WRAPPER ATTRIBUTES (interface)
  *
  * @desc Defines all wrapper attributes and their data types.
  */
 interface DataIFC {
-  (data: object | null, ms?: number | any): { error: null; data: object | null; ms: number }
+  (data: object | undefined, ms?: number | any): { error: undefined; data: object | undefined; ms: number }
 }
 interface PaginationDataIFC {
-  (data: object | null, meta: object): { error: null; data: object | null; meta: object }
+  (data: object | undefined, meta: object): { error: undefined; data: object | undefined; meta: object }
 }
 interface ErrorIFC {
-  (error: object): { error: object; data: null }
+  (error: object): { error: object; data: undefined }
 }
 interface ResponseIFC {
   (
@@ -51,7 +83,7 @@ interface CheckErrorCodeIFC {
 }
 interface ResultIFC {
   error: object | any
-  data: object | null
+  data: object | any
 }
 interface PostRequestIFC {
   (result: ResultIFC): Promise<ResultIFC>
@@ -81,7 +113,7 @@ interface ProcedureIFC {
  * @desc Defines all function attributes and their data types.
  */
 interface FunctionIFC {
-  (payload: any, startTime: [number, number]): any
+  (payload: any, startTime?: [number, number]): any
 }
 /**
  *  !-- LOGGER ATTRIBUTES (interface)
@@ -109,6 +141,11 @@ interface IsValidPayloadIFC {
 export {
   ControllerIFC,
   CookieIFC,
+  TokenIFC,
+  GetKeyIFC,
+  GenerateTokenIFC,
+  DecodedTokenIFC,
+  VerifyTokenIFC,
   DataIFC,
   PaginationDataIFC,
   ErrorIFC,

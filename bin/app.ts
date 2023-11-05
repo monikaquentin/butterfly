@@ -1,5 +1,5 @@
-import * as logger from '@helpers/utils/logger'
-import * as wrapper from '@helpers/utils/wrapper'
+import * as logger from '@/helpers/utils/logger'
+import * as wrapper from '@/helpers/utils/wrapper'
 
 import cors from 'cors'
 import PATH from 'path'
@@ -11,12 +11,12 @@ import compression from 'compression'
 import cookieParser from 'cookie-parser'
 import useragent from 'express-useragent'
 
-import eTime from '@helpers/utils/estimateTime'
+import eTime from '@/helpers/utils/estimateTime'
 
 import { rateLimit } from 'express-rate-limit'
-import { ENV } from '@helpers/infra/configs/global.config'
-import { http_success } from '@helpers/definitions/errors'
-import { ControllerIFC } from '@helpers/definitions/interfaces'
+import { ENV } from '@/helpers/infra/configs/global.config'
+import { http_success } from '@/helpers/definitions/errors'
+import { ControllerIFC } from '@/helpers/definitions/interfaces'
 import express, { Request, Response, NextFunction, Application } from 'express'
 
 const env: any = ENV('/')
@@ -26,16 +26,14 @@ class App {
   public HOST: string
   public PORT: number
 
-  private URI: string
   private CORS: RegExp
   private CONF: object
 
   constructor(controllers: ControllerIFC[], HOST: string, PORT: number) {
     this.express = express()
     this.HOST = HOST || 'localhost'
-    this.PORT = PORT || 7952
-    this.URI = `http://${HOST}:${PORT}`
-    this.CORS = /^.+localhost(7952|3000|8080)$/
+    this.PORT = PORT || 5000
+    this.CORS = /^.+localhost(5000|3000|8080)$/
     this.CONF = {
       maxAge: 5,
       origin: this.CORS || ['*'],
@@ -77,7 +75,7 @@ class App {
   private init_default_middleware(): void {
     this.express
       .use((request: Request, response: Response, next: NextFunction): void => {
-        request.index = { ...request.index, startTime: process.hrtime() }
+        request.startTime = process.hrtime()
         next()
       })
       .use(helmet({ contentSecurityPolicy: false }))
@@ -111,8 +109,8 @@ class App {
     const limiter: any = rateLimit({
       windowMs: 15 * 60 * 1000,
       // ? 15 minutes
-      max: 500,
-      // ? Limit each IP to 500 requests per windowMs
+      max: 1000,
+      // ? Limit each IP to 1000 requests per windowMs
       // ? If the request has exceeded the limit, give a message
       message: {
         status: false,
@@ -132,7 +130,7 @@ class App {
     })
 
     this.express.use(/.*/, (request: Request, response: Response, next: NextFunction): void => {
-      const feed: string = '[Butterfly] This service is running properly'
+      const feed: string = '[IRIS] This service is running properly'
       const agent: any = request.useragent?.source
       wrapper.response(response, 'SUCCESS', http_success.OK, eTime(process.hrtime()), wrapper.data(agent), feed)
     })
@@ -146,7 +144,7 @@ class App {
       const ctx: string = 'app:listen'
       const uri: string = `http://127.0.0.1${this.PORT !== 80 ? ':' + this.PORT : ''}`
 
-      logger.info(undefined, ctx, `[Butterfly listening on ${uri}]`, `(${eTime(process.hrtime())} ms)`)
+      logger.info(undefined, ctx, `[IRIS listening on ${uri}]`, `(${eTime(process.hrtime())} ms)`)
     })
   }
 }

@@ -1,7 +1,7 @@
-import * as wrapper from '@helpers/utils/wrapper'
+import * as wrapper from '@/helpers/utils/wrapper'
 
-import { ConflictError } from '@helpers/definitions/errors'
-import { IsValidPayloadIFC } from '@helpers/definitions/interfaces'
+import { ConflictError } from '@/helpers/definitions/errors'
+import { IsValidPayloadIFC } from '@/helpers/definitions/interfaces'
 
 const isValid: IsValidPayloadIFC = (payload, constraint) => {
   const message: object | any = {}

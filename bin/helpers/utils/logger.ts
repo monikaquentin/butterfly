@@ -1,8 +1,9 @@
 import morgan from 'morgan'
+import moment from 'moment'
 
 import { Request, Response } from 'express'
 import { createLogger, transports, format, Logger } from 'winston'
-import { LogIFC, InfoLogIFC, ErrorLogIFC } from '@helpers/definitions/interfaces'
+import { LogIFC, InfoLogIFC, ErrorLogIFC } from '@/helpers/definitions/interfaces'
 
 // Import the printf function from Winston's format module.
 const { printf } = format
@@ -13,7 +14,7 @@ const logger: Logger = createLogger({
   // Define the log message format, including the log level (uppercase) and the log message itself.
   format: printf(
     ({ level, context, ip, message, meta }) =>
-      `${level.toUpperCase()} ${ip || '::ffff:127.0.0.1'} ${context} ${message} ${meta}`
+      `${level.toUpperCase()} ${ip || '::ffff:127.0.0.1'} ${context} ${message} ${meta} | ${moment().format()}`
   ),
   defaultMeta: { service: 'app:service' },
   // Configure the logger to output logs to the console.

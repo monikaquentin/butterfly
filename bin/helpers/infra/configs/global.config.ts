@@ -2,21 +2,15 @@ import 'dotenv/config'
 
 import confidence from 'confidence'
 
-import { GetENVIFC } from '@helpers/definitions/interfaces'
+import { GetENVIFC } from '@/helpers/definitions/interfaces'
 
 const config: object = {
   app: {
     env: process.env.APP_ENV,
     name: process.env.APP_NAME,
     host: process.env.APP_HOST,
-    port: process.env.APP_PORT,
-    ed25519Secret: process.env.ED25519_SECRET,
-    ed25519Public: process.env.ED25519_PUBLIC,
-    curve25519Secret: process.env.CURVE25519_SECRET,
-    curve25519Public: process.env.CURVE25519_PUBLIC,
-    secgp256k1Secret: process.env.SECG_P256K1_SECRET,
-    secgp256k1Public: process.env.SECG_P256K1_PUBLIC,
-    delimiter: process.env.DELIMITER,
+    port: parseInt(process.env.APP_PORT || '0'),
+    ssl: process.env.APP_SSL,
     namespace: process.env.APP_NAMESPACE
   },
   cookie: {
@@ -29,25 +23,46 @@ const config: object = {
   },
   jwt: {
     secret: process.env.JWT_SECRET,
-    algorithm: process.env.JWT_ALGORITHM,
-    audience: process.env.JWT_AUDIENCE,
-    issuer: process.env.JWT_ISSUER,
-    private: process.env.PRIVATE_KEY_PATH,
-    public: process.env.PUBLIC_KEY_PATH
+    options: {
+      algorithm: process.env.JWT_ALGORITHM,
+      audience: process.env.JWT_AUDIENCE,
+      issuer: process.env.JWT_ISSUER
+    },
+    privateKeyPath: process.env.JWT_PRIVATE_KEY_PATH,
+    publicKeyPath: process.env.JWT_PUBLIC_KEY_PATH
   },
   database: {
     url: process.env.DATABASE_URL,
+    host: process.env.DATABASE_HOST,
     name: process.env.DATABASE_NAME,
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
-    host: process.env.DATABASE_HOST,
-    connectionLimit: process.env.DATABASE_CONNECTION_LIMIT
+    connectionLimit: parseInt(process.env.DATABASE_CONNECTION_LIMIT || '0')
   },
   cipher: {
     algorithm: process.env.CIPHER_ALGORITHM,
-    ivLength: parseInt(process.env.CIPHER_IV_LENGTH!),
-    gcm_key: process.env.CIPHER_GCM_KEY,
-    cbc_key: process.env.CIPHER_CBC_KEY
+    ivLength: parseInt(process.env.CIPHER_IV_LENGTH || '0'),
+    gcmKey: process.env.CIPHER_GCM_KEY,
+    cbcKey: process.env.CIPHER_CBC_KEY,
+    keys: {
+      ed25519: {
+        private: process.env.CIPHER_ED25519_SECRET,
+        public: process.env.CIPHER_ED25519_PUBLIC
+      },
+      curve25519: {
+        private: process.env.CIPHER_CURVE25519_SECRET,
+        public: process.env.CIPHER_CURVE25519_PUBLIC
+      },
+      secgp256k1: {
+        private: process.env.CIPHER_SECG_P256K1_SECRET,
+        public: process.env.CIPHER_SECG_P256K1_PUBLIC
+      },
+      prime256v1: {
+        private: process.env.CIPHER_PRIME256V1_SECRET,
+        public: process.env.CIPHER_PRIME256V1_PUBLIC
+      }
+    },
+    delimiter: process.env.CIPHER_DELIMITER
   }
 }
 

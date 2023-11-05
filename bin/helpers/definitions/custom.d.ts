@@ -9,7 +9,11 @@ declare global {
   // Do whatever
   namespace Express {
     export interface Request {
-      index: IndexInterface
+      startTime: [number, number]
+      csrfToken(): string
+    }
+    export interface CookieOptions {
+      key?: string | undefined
     }
   }
 }

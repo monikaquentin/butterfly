@@ -1,6 +1,6 @@
-import * as logger from '@helpers/utils/logger'
+import * as logger from '@/helpers/utils/logger'
 
-import { cookieConfig } from '@helpers/definitions/config'
+import { cookieConfig } from '@/middlewares/csrf.middleware'
 import {
   DataIFC,
   PaginationDataIFC,
@@ -8,7 +8,7 @@ import {
   ResponseIFC,
   PaginationResponseIFC,
   CheckErrorCodeIFC
-} from '@helpers/definitions/interfaces'
+} from '@/helpers/definitions/interfaces'
 import {
   ConflictError,
   ExpectationFailedError,
@@ -20,18 +20,18 @@ import {
   GatewayTimeoutError,
   BadRequestError,
   http_error
-} from '@helpers/definitions/errors'
+} from '@/helpers/definitions/errors'
 
-const data: DataIFC = (data, ms) => ({ error: null, data, ms })
-const error: ErrorIFC = (error) => ({ error, data: null })
+const data: DataIFC = (data, ms) => ({ error: undefined, data, ms })
+const error: ErrorIFC = (error) => ({ error, data: undefined })
 const response: ResponseIFC = (response, type, responseCode, ms, result, feed, httpOnlyCookie) => {
   let status: boolean = Boolean(true)
-  let data: object | null = result.data
+  let data: object | undefined = result.data
   let code: number = responseCode
   if (type !== 'SUCCESS') {
     const errCode: any = checkErrorCode(result.error)
     status = false
-    data = result.error.data || null
+    data = result.error.data || undefined
     feed = result.error.feed || feed
     code = result.error.code || errCode
     responseCode = errCode
@@ -45,7 +45,7 @@ const response: ResponseIFC = (response, type, responseCode, ms, result, feed, h
   }
   response.status(responseCode).json({ success: status, code, ms, data, feed })
 }
-const paginationData: PaginationDataIFC = (data, meta) => ({ error: null, data, meta })
+const paginationData: PaginationDataIFC = (data, meta) => ({ error: undefined, data, meta })
 const paginationResponse: PaginationResponseIFC = (response, type, result, feed, code) => {
   let status = true
   let data = result.data

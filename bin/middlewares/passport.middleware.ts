@@ -1,7 +1,7 @@
 import passport from 'passport'
 
 import { BasicStrategy } from 'passport-http'
-import { ENV } from '@helpers/infra/configs/global.config'
+import { ENV } from '@/helpers/infra/configs/global.config'
 
 class Auth {
   private username: string
