@@ -7,6 +7,7 @@ import UserIFC from '@/controllers/user/user.interface'
 
 import { Model } from 'mongoose'
 import { v5 as uuidv5 } from 'uuid'
+import { ENV } from '@/helpers/infra/configs/global.config'
 import { FunctionIFC, TokenIFC } from '@/helpers/definitions/interfaces'
 import {
   ConflictError,
@@ -15,6 +16,8 @@ import {
   UnauthorizedError,
   InternalServerError
 } from '@/helpers/definitions/errors'
+
+const env: any = ENV('/')
 
 /**
  *  !-- AUTH SERVICE (class)
@@ -79,7 +82,7 @@ class AuthService {
       const userExist: UserIFC | null = await UserModel.findOne({ email: payload.email })
       if (userExist) return wrapper.error(new ConflictError('User already exist.'))
 
-      payload.userId = uuidv5(payload.username, `${process.env.APP_NAMESPACE}`)
+      payload.userId = uuidv5(payload.username, env.app.namespace)
       payload.email = payload.email.toLowerCase()
 
       return wrapper.data(await this.UserModel.create(payload))
