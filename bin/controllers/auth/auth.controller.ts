@@ -62,7 +62,7 @@ class AuthController implements ControllerIFC {
     const ctx: string = `GET:${this.ctx}-csrf`
 
     const postRequest: PostRequestIFC = async (payload: any) => {
-      return this.AuthService.csrf(payload, startTime)
+      return this.AuthService.csrf(payload)
     }
     const sendResponse: SendResponseIFC = async (csrf) => {
       const elapsedTime: number = eTime(startTime)
@@ -214,7 +214,7 @@ class AuthController implements ControllerIFC {
 
     const postRequest: PostRequestIFC = async (validate) => {
       if (validate.error) return validate
-      return this.AuthService.refresh(payload, startTime)
+      return this.AuthService.refresh(payload)
     }
     const sendResponse: SendResponseIFC = async (refresh) => {
       const elapsedTime: number = eTime(startTime)
